@@ -18,7 +18,6 @@ function createTokens(user) {
     return { access, refresh }
 }
 
-
 async function login(req, res) {
     try {
         const username = req.body.username;
@@ -68,7 +67,29 @@ async function registration(req, res) {
 
 }
 
+async function refresh(req, res) {
+    try {
+        const refresh = req.body.refresh
+
+        const verified = jwt.verify(refresh, PRIVATE_KEY)
+        if (!verified) throw "Invalid token"
+
+        const findedUser = UserModel.findById(verified.id)
+        if (!findedUser) throw "Invalid token data"
+
+        const token = createTokens(findedUser)
+        return res.send(token)
+
+    } catch (error) {
+        console.log(error)
+        return res.status(403).send("Unathorizired")
+    }
+
+
+}
+
 module.exports = {
     login,
     registration,
+    refresh,
 }
