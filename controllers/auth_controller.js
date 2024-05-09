@@ -55,6 +55,8 @@ async function registration(req, res) {
         const doc = new UserModel({
             username: username,
             password: hashPass,
+            name: req.body.name,
+            surname: req.body.surname,
         }
         )
         await doc.save()
