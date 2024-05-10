@@ -1,17 +1,22 @@
 
 const UserModel = require('../models/user')
+const RoleModel = require('../models/role')
 const crypto = require('crypto-js')
 const jwt = require('jsonwebtoken')
 const { PRIVATE_KEY, ACCESS_LIFE, REFRESH_LIFE } = process.env
 
+
+
 function createTokens(user) {
     var access = jwt.sign({
-        id: user._id
+        id: user._id,
+        roles: user.roles
     }, PRIVATE_KEY, {
         expiresIn: ACCESS_LIFE
     })
     var refresh = jwt.sign({
         id: user._id,
+        roles: user.roles
     }, PRIVATE_KEY, {
         expiresIn: REFRESH_LIFE
     })
@@ -20,8 +25,7 @@ function createTokens(user) {
 
 async function login(req, res) {
     try {
-        const username = req.body.username;
-        const password = req.body.password;
+        const { username, password } = req.body
 
         const findedUser = await UserModel.findOne({ username });
         if (!findedUser)
@@ -44,19 +48,20 @@ async function login(req, res) {
 
 async function registration(req, res) {
     try {
-        const username = req.body.username
-        const password = req.body.password
+        const { username, password, name, surname } = req.body
         const hashPass = crypto.HmacSHA256(password, PRIVATE_KEY)
 
         const findedUser = await UserModel.findOne({ username })
-        console.log(findedUser)
         if (findedUser) { return res.status(401).send("User already exist") }
+
+        const defaultRole = await RoleModel.findOne({ value: "user" })
 
         const doc = new UserModel({
             username: username,
             password: hashPass,
-            name: req.body.name,
-            surname: req.body.surname,
+            name: name,
+            surname: surname,
+            roles: [defaultRole.value],
         }
         )
         await doc.save()
@@ -86,8 +91,6 @@ async function refresh(req, res) {
         console.log(error)
         return res.status(403).send("Unathorizired")
     }
-
-
 }
 
 module.exports = {
