@@ -1,5 +1,5 @@
 const RoleModel = require('../models/role')
-
+const UserModel = require('../models/user')
 
 
 async function createRole(req, res) {
@@ -17,7 +17,33 @@ async function createRole(req, res) {
     }
 }
 
+async function addRole(req, res) {
+    try {
+        const { username, role } = req.body
+        const findedUser = await UserModel.findOne({ username })
+        if (!findedUser) {
+            return res.status(400).send("User not found")
+        }
+        const findedRole = await RoleModel.findOne({ value: role })
+        if (!findedRole) {
+            return res.status(400).send("Role not found")
+        }
+        if (findedUser.roles.includes(findedRole.value)) {
+            return res.status(400).send("User already has this role");
+        }
+
+        findedUser.roles.push(findedRole.value)
+        await findedUser.save()
+        res.send("Role added")
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("Iternal server error")
+    }
+
+}
+
 
 module.exports = {
-    createRole
+    createRole,
+    addRole,
 }
