@@ -17,7 +17,7 @@ async function createRole(req, res) {
     }
 }
 
-async function addRole(req, res) {
+async function addRoleToUser(req, res) {
     try {
         const { username, role } = req.body
         const findedUser = await UserModel.findOne({ username })
@@ -42,8 +42,35 @@ async function addRole(req, res) {
 
 }
 
+async function removeUserRole(req, res) {
+    try {
+        const { username, role } = req.body
+        const findedUser = await UserModel.findOne({ username })
+        if (!findedUser) {
+            return res.status(400).send("User not found")
+        }
+        const findedRole = await RoleModel.findOne({ value: role })
+        if (!findedRole) {
+            return res.status(400).send("Role not found")
+        }
+        if (!findedUser.roles.includes(findedRole.value)) {
+            return res.status(400).send("User does not have this role");
+        }
+
+        findedUser.roles = findedUser.roles.filter(role => role !== findedRole.value);
+        await findedUser.save()
+        res.send("Role deleted")
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("Iternal server error")
+    }
+
+}
+
 
 module.exports = {
     createRole,
-    addRole,
+    addRoleToUser,
+    removeUserRole
 }
