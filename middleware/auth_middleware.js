@@ -16,7 +16,7 @@ async function jwtMiddleware(req, res, next) {
 
         const decodedData = jwt.verify(token, PRIVATE_KEY);
         req.userData = decodedData
-        console.log(req.userData)
+        console.log("DECODEDDATA" + decodedData.toString())
         next();
     } catch (error) {
         console.log(error)
