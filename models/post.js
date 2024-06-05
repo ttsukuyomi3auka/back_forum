@@ -1,4 +1,6 @@
 const { Schema, model } = require('mongoose')
+const { ViewStatus } = require('./enum')
+
 const PostSchema = new Schema({
     title: {
         type: String,
@@ -9,7 +11,8 @@ const PostSchema = new Schema({
         required: true,
     },
     author: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
     },
     date: {
@@ -21,10 +24,19 @@ const PostSchema = new Schema({
         default: 0,
     },
     areas: {
-        type: [String],
+        type: [Schema.Types.ObjectId],
+        ref: 'Area',
+    },
+    comments: {
+        type: [Schema.Types.ObjectId],
+        ref: "Comment",
         default: [],
     },
-    comments: [{ type: String, ref: 'Comment' }]
+    status: {
+        type: String,
+        enum: Object.values(ViewStatus),
+        required: true
+    }
 
 })
 module.exports = model('Post', PostSchema)

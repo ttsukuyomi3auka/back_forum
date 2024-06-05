@@ -1,4 +1,7 @@
 const { Schema, model } = require('mongoose')
+
+const { Roles } = require('./enum')
+
 const UserSchema = new Schema({
     username: {
         type: String,
@@ -17,7 +20,29 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    roles: [{ type: String, ref: 'Role', default: "user" }]
+    aboutMe: {
+        type: String,
+        default: ""
+    },
+    posts: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Post',
+        default: []
+    },
+    role: {
+        type: String,
+        enum: Object.values(Roles),
+        default: Roles.USER,
+    },
+    comments: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Comment',
+        default: []
+    },
+    areas: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Area',
+    }
 
 })
 module.exports = model('User', UserSchema)

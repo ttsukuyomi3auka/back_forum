@@ -1,11 +1,7 @@
-
 const UserModel = require('../models/user')
-const RoleModel = require('../models/role')
 const crypto = require('crypto-js')
 const jwt = require('jsonwebtoken')
 const { PRIVATE_KEY, ACCESS_LIFE, REFRESH_LIFE } = process.env
-
-const { Roles } = require('../models/enum')
 
 
 function createTokens(user) {
@@ -60,7 +56,6 @@ async function registration(req, res) {
             password: hashPass,
             name: name,
             surname: surname,
-            roles: Roles.USER,
         }
         )
         await doc.save()

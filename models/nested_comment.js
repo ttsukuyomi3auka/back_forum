@@ -1,8 +1,6 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model } = require('mongoose');
 
-const { ViewStatus } = require('../models/enum')
-
-const CommentSchema = new Schema({
+const NestedCommentSchema = new Schema({
     data: {
         type: String,
         required: true,
@@ -25,16 +23,11 @@ const CommentSchema = new Schema({
         ref: 'User',
         required: true,
     },
-    post: {
+    parent: {
         type: Schema.Types.ObjectId,
-        ref: 'Post',
+        ref: 'Comment',
         required: true,
-    },
-    childer: {
-        type: [Schema.Types.ObjectId],
-        ref: 'NestedComment',
-        default: [],
     }
+});
 
-})
-module.exports = model('Comment', CommentSchema)
+module.exports = model('NestedComment', NestedCommentSchema);
