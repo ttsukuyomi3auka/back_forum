@@ -5,6 +5,7 @@ const crypto = require('crypto-js')
 const jwt = require('jsonwebtoken')
 const { PRIVATE_KEY, ACCESS_LIFE, REFRESH_LIFE } = process.env
 
+const { Roles } = require('../models/enum')
 
 
 function createTokens(user) {
@@ -54,14 +55,12 @@ async function registration(req, res) {
         const findedUser = await UserModel.findOne({ username })
         if (findedUser) { return res.status(401).send("User already exist") }
 
-        const defaultRole = await RoleModel.findOne({ value: "user" })
-
         const doc = new UserModel({
             username: username,
             password: hashPass,
             name: name,
             surname: surname,
-            roles: [defaultRole.value],
+            roles: Roles.USER,
         }
         )
         await doc.save()

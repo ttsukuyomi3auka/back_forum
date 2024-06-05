@@ -17,7 +17,7 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    roles: [{ type: String, ref: 'Role' }]
+    roles: [{ type: String, ref: 'Role', default: "user" }]
 
 })
 module.exports = model('User', UserSchema)
