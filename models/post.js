@@ -26,6 +26,7 @@ const PostSchema = new Schema({
     areas: {
         type: [Schema.Types.ObjectId],
         ref: 'Area',
+        required: true
     },
     comments: {
         type: [Schema.Types.ObjectId],
@@ -35,7 +36,7 @@ const PostSchema = new Schema({
     status: {
         type: String,
         enum: Object.values(ViewStatus),
-        required: true
+        default: ViewStatus.PENDING
     }
 
 })

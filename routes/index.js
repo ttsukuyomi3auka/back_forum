@@ -10,4 +10,6 @@ router.use('/auth', require("./auth_route"))
 
 router.use('/area', require('./area_route'))
 
+router.use('/post', require('./post_route'))
+
 module.exports = router
