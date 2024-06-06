@@ -113,9 +113,31 @@ async function updatePost(req, res) {
     }
 }
 
+async function getApprovedPosts(req, res) {
+    try {
+        const approvedPosts = await PostModel.find({ status: ViewStatus.APPROVED });
+        return res.status(200).send(approvedPosts);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error");
+    }
+}
+
+async function getAllNonApprovedPosts(req, res) {
+    try {
+        const nonApprovedPosts = await PostModel.find({ status: { $ne: ViewStatus.APPROVED } });
+        return res.status(200).send(nonApprovedPosts);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error");
+    }
+}
+
 
 module.exports = {
     createPost,
     updatePost,
+    getApprovedPosts,
+    getAllNonApprovedPosts,
 
 }
