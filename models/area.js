@@ -4,6 +4,7 @@ const AreaSchema = new Schema({
     title: {
         type: String,
         required: true,
+        unique: true,
     }
 })
 

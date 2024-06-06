@@ -7,13 +7,13 @@ const { PRIVATE_KEY, ACCESS_LIFE, REFRESH_LIFE } = process.env
 function createTokens(user) {
     var access = jwt.sign({
         id: user._id,
-        roles: user.roles
+        role: user.role
     }, PRIVATE_KEY, {
         expiresIn: ACCESS_LIFE
     })
     var refresh = jwt.sign({
         id: user._id,
-        roles: user.roles
+        role: user.role
     }, PRIVATE_KEY, {
         expiresIn: REFRESH_LIFE
     })

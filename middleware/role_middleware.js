@@ -1,15 +1,10 @@
 module.exports = function (roles) {
     return function (req, res, next) {
         try {
-            const userRoles = req.userData.roles
-            let hasRole = false
-            userRoles.forEach(role => {
-                if (roles.includes(role)) {
-                    hasRole = true
-                }
-            });
-            if (!hasRole) {
-                return res.status(405).send("You don't have access")
+            const userRole = req.userData.role
+
+            if (!roles.includes(userRole)) {
+                return res.status(405).send("You don't have access");
             }
             next()
 

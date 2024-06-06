@@ -8,4 +8,6 @@ router.use('/role', [jwtMiddleware, roleMiddlewate(["admin"])], require("./role_
 
 router.use('/auth', require("./auth_route"))
 
+router.use('/area', require('./area_route'))
+
 module.exports = router
