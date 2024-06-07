@@ -133,11 +133,53 @@ async function getAllNonApprovedPosts(req, res) {
     }
 }
 
+async function getPostById(req, res) {
+    try {
+        const postId = req.params.id;
+        const post = await PostModel.findById(postId)
+        if (!post) {
+            return res.status(404).send("Post not found");
+        }
+        return res.send(post)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send("Iternal server error")
+    }
+
+}
+
+async function deletePost(req, res) {
+    try {
+        const postId = req.params.id
+        const userId = req.userData.id
+        const userRole = req.userData.role;
+
+        const post = await PostModel.findByIdAndDelete(postId);
+        if (!post) {
+            return res.status(404).send("Post not found");
+        }
+
+        if (post.author.toString() !== userId && userRole !== Roles.ADMIN) {
+            return res.status(403).send("You dont have access");
+        }
+
+        await PostModel.findByIdAndDelete(postId);
+
+        return res.status(200).send("Post deleted");
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send("Iternal server error")
+    }
+}
+
 
 module.exports = {
     createPost,
     updatePost,
     getApprovedPosts,
     getAllNonApprovedPosts,
+    getPostById,
+    deletePost,
 
 }

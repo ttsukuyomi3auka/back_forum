@@ -7,11 +7,15 @@ const router = require('express').Router()
 
 router.post('/create', [jwtMiddleware], postController.createPost)
 
-router.put('/change', [jwtMiddleware], postController.updatePost)
+router.post('/change', [jwtMiddleware], postController.updatePost)
 
 router.get('/', postController.getApprovedPosts)
 
 router.get('/non-approved', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR])], postController.getAllNonApprovedPosts)
+
+router.get('/post:id', postController.getPostById)
+
+router.get('/delete:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR, Roles.USER, Roles.BANED])], postController.deletePost)
 
 
 module.exports = router
