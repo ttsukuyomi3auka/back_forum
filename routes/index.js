@@ -15,4 +15,6 @@ router.use('/post', require('./post_route'))
 
 router.use('/user', require('./user_route'))
 
+router.use('/comment', require('./comment_route'))
+
 module.exports = router

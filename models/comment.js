@@ -18,7 +18,7 @@ const CommentSchema = new Schema({
     status: {
         type: String,
         enum: Object.values(ViewStatus),
-        required: true,
+        default: ViewStatus.PENDING
     },
     author: {
         type: Schema.Types.ObjectId,
