@@ -8,7 +8,7 @@ async function createPost(req, res) {
     try {
         const { title, description, areas } = req.body;
 
-        if (!title || !description || !areas || !Array.isArray(areas)) {
+        if (!title || !description || !areas || !Array.isArray(areas) || areas.length === 0) {
             return res.status(400).send("Missing required fields or invalid format");
         }
         const authorId = req.userData.id
@@ -35,7 +35,7 @@ async function createPost(req, res) {
         author.posts.push(newPost._id);
         await author.save();
 
-        return res.status(201).send(newPost);
+        return res.status(201).send("Post added");
     } catch (error) {
         console.log(error);
         return res.status(500).send("Internal server error");
@@ -172,7 +172,21 @@ async function deletePost(req, res) {
         return res.status(500).send("Iternal server error")
     }
 }
+async function getUserPosts(req, res) {
+    try {
+        const userId = req.params.id;
+        const posts = await PostModel.find({ author: userId })
 
+        if (!posts) {
+            return res.status(404).send("Posts not found for this user");
+        }
+        return res.send(posts)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send("Iternal server error")
+    }
+
+}
 
 module.exports = {
     createPost,
@@ -181,5 +195,6 @@ module.exports = {
     getAllNonApprovedPosts,
     getPostById,
     deletePost,
+    getUserPosts,
 
 }

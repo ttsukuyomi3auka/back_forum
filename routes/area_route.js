@@ -7,6 +7,7 @@ const { Roles } = require('../models/enum')
 
 router.post("/add", [jwtMiddleware, role_middleware(Roles.ADMIN)], areaController.createArea)
 router.get("/", areaController.getAllAreas)
+router.get("/:id", areaController.getAreaById)
 
 
 module.exports = router

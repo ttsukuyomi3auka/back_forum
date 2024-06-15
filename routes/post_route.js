@@ -17,5 +17,7 @@ router.get('/post:id', postController.getPostById)
 
 router.get('/delete:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR, Roles.USER, Roles.BANED])], postController.deletePost)
 
+router.get('/user-posts/:id', postController.getUserPosts)
+
 
 module.exports = router

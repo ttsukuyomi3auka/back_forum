@@ -30,11 +30,23 @@ async function getAllAreas(req, res) {
         res.status(500).send("Internal server error");
     }
 }
-
+async function getAreaById(req, res) {
+    try {
+        const area = await AreaModel.findById(req.params.id);
+        if (!area) {
+            return res.status(404).send("Area not found")
+        }
+        res.status(200).json(area);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal server error");
+    }
+}
 
 
 module.exports = {
     createArea,
     getAllAreas,
+    getAreaById,
 
 }
