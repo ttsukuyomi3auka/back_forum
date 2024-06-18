@@ -32,27 +32,52 @@ async function addAreasToUser(req, res) {
         if (areas.length !== areaIds.length) {
             return res.status(404).send("One or more areas not found");
         }
+        user.areas = areaIds;
 
-        const existingAreas = user.areas.map(area => area.toString());
-        const newAreas = areas.filter(area => !existingAreas.includes(area._id.toString()));
-
-        if (newAreas.length === 0) {
-            return res.status(200).send("No new areas to add");
-        }
-
-        user.areas.push(...newAreas.map(area => area._id));
         await user.save();
 
-        return res.status(201).send(user);
+        return res.status(201).send(user)
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).send("Internal server error");
     }
 }
 
+async function updateUser(req, res) {
+    try {
+        const { username, name, surname, aboutMe } = req.body;
+        const userId = req.params.id;
+
+        const findedUser = await UserModel.findById(userId)
+            .populate('areas', 'title')
+        if (!findedUser) {
+            return res.status(404).send("User not found")
+        }
+        if (username) {
+            const existingUser = await UserModel.findOne({ username });
+            if (existingUser && existingUser._id.toString() !== userId) {
+                return res.status(403).send("Username already taken");
+            }
+        }
+
+        findedUser.name = username
+        findedUser.name = name || findedUser.name;
+        findedUser.surname = surname || findedUser.surname;
+        findedUser.aboutMe = aboutMe;
+        await findedUser.save();
+
+        return res.status(201).send("User updated successfully")
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error")
+    }
+
+}
 
 
 module.exports = {
     getUserById,
     addAreasToUser,
+    updateUser,
 }

@@ -8,4 +8,6 @@ router.get('/:id', userController.getUserById)
 
 router.post('/areas:id', [jwtMiddleware], userController.addAreasToUser)
 
+router.post('/update:id', [jwtMiddleware], userController.updateUser)
+
 module.exports = router

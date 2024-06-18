@@ -15,4 +15,6 @@ router.get('/approve:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MO
 
 router.get('/reject:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR])], commentController.rejectComment)
 
+router.get('/like:id', [jwtMiddleware], commentController.addLikeToComment)
+
 module.exports = router

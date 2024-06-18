@@ -112,6 +112,24 @@ async function approveComment(req, res) {
         return res.status(500).send("Internal server error");
     }
 }
+async function addLikeToComment(req, res) {
+    try {
+        const commentId = req.params.id
+        const findedComment = await CommentModel.findById(commentId)
+        if (!findedComment) {
+            return res.status(404).send("Comment not found");
+        }
+        findedComment.likes += 1
+        await findedComment.save()
+        return res.status(201).send("like added")
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send("Iternal server error")
+
+    }
+}
+
 
 module.exports = {
     createComment,
@@ -119,4 +137,5 @@ module.exports = {
     getAllNonApprovedComments,
     approveComment,
     rejectComment,
+    addLikeToComment,
 }
