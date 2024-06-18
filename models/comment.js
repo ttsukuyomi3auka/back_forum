@@ -30,7 +30,7 @@ const CommentSchema = new Schema({
         ref: 'Post',
         required: true,
     },
-    childer: {
+    children: {
         type: [Schema.Types.ObjectId],
         ref: 'NestedComment',
         default: [],

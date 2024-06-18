@@ -9,4 +9,10 @@ router.post('/create', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODER
 
 router.get('/post:id', commentController.getPostComments)
 
+router.get('/non-approved', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR])], commentController.getAllNonApprovedComments)
+
+router.get('/approve:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR])], commentController.approveComment)
+
+router.get('/reject:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR])], commentController.rejectComment)
+
 module.exports = router

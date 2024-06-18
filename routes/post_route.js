@@ -19,5 +19,10 @@ router.get('/delete:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MOD
 
 router.get('/user-posts/:id', postController.getUserPosts)
 
+router.get('/like:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR, Roles.USER, Roles.BANED])], postController.addLikeToPost)
+
+router.get('/approve:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR])], postController.approvePost)
+
+router.get('/reject:id', [jwtMiddleware, role_middleware([Roles.ADMIN, Roles.MODERATOR])], postController.rejectPost)
 
 module.exports = router

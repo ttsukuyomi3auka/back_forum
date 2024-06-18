@@ -58,7 +58,7 @@ async function getPostComments(req, res) {
             return res.status(404).send("Post not found");
         }
 
-        const comments = await CommentModel.find({ post: postId, status: 'Approved' }).populate('author', 'username');
+        const comments = await CommentModel.find({ post: postId, status: ViewStatus.APPROVED }).populate('author', 'username');
 
         return res.status(200).json(comments);
     } catch (error) {
@@ -66,9 +66,57 @@ async function getPostComments(req, res) {
         return res.status(500).send("Internal server error");
     }
 }
+async function getAllNonApprovedComments(req, res) {
+    try {
+        const nonApprovedComments = await CommentModel.find({ status: ViewStatus.PENDING }).populate('author', 'username');
+        return res.status(200).send(nonApprovedComments);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error");
+    }
+}
+async function rejectComment(req, res) {
+    try {
+        const commentId = req.params.id;
 
+        const comment = await CommentModel.findById(commentId);
+        if (!comment) {
+            return res.status(404).send("Comment not found");
+        }
+
+        comment.status = ViewStatus.REJECTED;
+        await comment.save();
+
+        return res.status(201).send("Comment rejected");
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error");
+    }
+}
+
+async function approveComment(req, res) {
+    try {
+        const commentId = req.params.id;
+
+        const comment = await CommentModel.findById(commentId);
+        if (!comment) {
+            return res.status(404).send("Comment not found");
+        }
+
+        comment.status = ViewStatus.APPROVED;
+        await comment.save();
+
+        return res.status(201).send("Comment approved");
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error");
+    }
+}
 
 module.exports = {
     createComment,
     getPostComments,
+    getAllNonApprovedComments,
+    approveComment,
+    rejectComment,
 }

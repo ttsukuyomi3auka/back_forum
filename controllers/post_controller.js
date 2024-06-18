@@ -115,7 +115,8 @@ async function updatePost(req, res) {
 
 async function getApprovedPosts(req, res) {
     try {
-        const approvedPosts = await PostModel.find({ status: ViewStatus.APPROVED });
+        const approvedPosts = await PostModel.find({ status: ViewStatus.APPROVED })
+            .populate('areas', 'title')
         return res.status(200).send(approvedPosts);
     } catch (error) {
         console.log(error);
@@ -125,7 +126,7 @@ async function getApprovedPosts(req, res) {
 
 async function getAllNonApprovedPosts(req, res) {
     try {
-        const nonApprovedPosts = await PostModel.find({ status: { $ne: ViewStatus.APPROVED } });
+        const nonApprovedPosts = await PostModel.find({ status: ViewStatus.PENDING }).populate('areas', 'title');
         return res.status(200).send(nonApprovedPosts);
     } catch (error) {
         console.log(error);
@@ -136,7 +137,7 @@ async function getAllNonApprovedPosts(req, res) {
 async function getPostById(req, res) {
     try {
         const postId = req.params.id;
-        const post = await PostModel.findById(postId)
+        const post = await PostModel.findById(postId).populate('areas', 'title')
         if (!post) {
             return res.status(404).send("Post not found");
         }
@@ -175,7 +176,7 @@ async function deletePost(req, res) {
 async function getUserPosts(req, res) {
     try {
         const userId = req.params.id;
-        const posts = await PostModel.find({ author: userId })
+        const posts = await PostModel.find({ author: userId }).populate('areas', 'title')
 
         if (!posts) {
             return res.status(404).send("Posts not found for this user");
@@ -188,6 +189,62 @@ async function getUserPosts(req, res) {
 
 }
 
+async function addLikeToPost(req, res) {
+    try {
+        const postId = req.params.id
+        const findedPost = await PostModel.findById(postId)
+        if (!findedPost) {
+            return res.status(404).send("Posts not found");
+        }
+        findedPost.likes += 1
+        await findedPost.save()
+        return res.status(201).send("like added")
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send("Iternal server error")
+
+    }
+}
+
+async function rejectPost(req, res) {
+    try {
+        const postId = req.params.id;
+
+        const post = await PostModel.findById(postId);
+        if (!post) {
+            return res.status(404).send("Post not found");
+        }
+
+        post.status = ViewStatus.REJECTED;
+        await post.save();
+
+        return res.status(201).send("Post rejected");
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error");
+    }
+}
+
+async function approvePost(req, res) {
+    try {
+        const postId = req.params.id;
+
+        const post = await PostModel.findById(postId);
+        if (!post) {
+            return res.status(404).send("Post not found");
+        }
+
+        post.status = ViewStatus.APPROVED;
+        await post.save();
+
+        return res.status(201).send("Post approved");
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error");
+    }
+}
+
 module.exports = {
     createPost,
     updatePost,
@@ -196,5 +253,8 @@ module.exports = {
     getPostById,
     deletePost,
     getUserPosts,
+    addLikeToPost,
+    rejectPost,
+    approvePost,
 
 }
